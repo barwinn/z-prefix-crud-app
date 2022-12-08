@@ -5,7 +5,12 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 const knex = require('knex')(require('./knexfile.js')["development"]);
 
+const cors = require('cors');
+
+
 app.use(express.json());
+app.use(cors());
+
 
 app.listen(PORT, () => {
     console.log(`The server is running on ${PORT}`);
@@ -97,6 +102,22 @@ app.get('/items', function(req, res) {
         })
       );
   });
+
+  //GET USER ITEMS
+app.get('/items/:id', function(req, res) {
+  const current_id = parseInt(req.params.id);
+  knex
+    .select('*')
+    .from('items')
+    .where('user_id', current_id)
+    .then(data => res.status(200).json(data))
+    .catch(err =>
+      res.status(404).json({
+        message:
+          'The data you are looking for could not be found. Please try again'
+      })
+    );
+});
 
 /////UPDATES/////
 //Update Item

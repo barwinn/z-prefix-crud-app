@@ -14,7 +14,7 @@ exports.up = function(knex) {
         .createTable('items', table => {
             table.increments('id').primary(); // adds an auto incrementing PK column
             table.integer('user_id').notNullable();
-            table.foreign('user_id').references('users.id');
+            //table.foreign('user_id').references('users.id');
             table.string('item_name');
             table.string('description');
             table.integer('quantity');
@@ -27,9 +27,9 @@ exports.up = function(knex) {
  */
 exports.down = function(knex) {
     return knex.schema
-        .alterTable('items', table => {
-            table.dropForeign('user_id');
-        })
+        // .alterTable('items', table => {
+        //     table.dropForeign('user_id');
+        // })
         .then(function () {
             return knex.schema.dropTableIfExists('users');
         })
