@@ -1,15 +1,11 @@
-FROM node:alpine
+FROM node:alpine 
 
 WORKDIR /app
 
 COPY . /app
+RUN npm install -g nodemon@2.0.15 &&\
+    npm install
 
-RUN npm install &&\ 
-npm install knex nodemon express cors pg &&\ 
-npx knex migrate:rollback &&\ 
-npx knex migrate:latest &&\ 
-npx knex seed:run
-
-EXPOSE 3000
+EXPOSE 8082
 
 CMD ["npm", "start"]
