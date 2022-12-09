@@ -2,10 +2,12 @@ import * as React from 'react';
 import ItemBox from './ItemBox';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
+import config from '../config'
+const ApiUrl = config[process.env.REACT_APP_NODE_ENV || "development"].apiUrl;
 
 function PublicItems(props) {
     const [itemData, setItemData] = React.useState([]);
-    const url = `http://localhost:8080/items`;
+    const url = ApiUrl + `/items`;
     let currentUser = props.user;
 
     React.useEffect(() => {

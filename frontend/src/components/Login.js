@@ -4,10 +4,13 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import AuthContext from './AuthContext'
+import config from '../config'
+const ApiUrl = config[process.env.REACT_APP_NODE_ENV || "development"].apiUrl;
+
 
 let data = {};
 let information = {};
-const url = `http://localhost:8080/users`;
+const url = ApiUrl + `/users`;
 
 function Login() {
   const authObject = React.useContext(AuthContext);

@@ -5,6 +5,8 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import NewItem from './NewItem';
+import config from '../config'
+const ApiUrl = config[process.env.REACT_APP_NODE_ENV || "development"].apiUrl;
 
 
 const dataset = {
@@ -25,9 +27,9 @@ function PersonalItems(props) {
       (currentMode === 'edit')? setMode('view') : setMode('edit');
     };
 
-    let url = `http://localhost:8080/items`
+    let url = ApiUrl + `/items`
     if (currentUser !== false) {
-    url = `http://localhost:8080/items/` + currentUser;
+    url = ApiUrl + `/items/` + currentUser;
     }
 
     React.useEffect(() => {

@@ -3,6 +3,8 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
+import config from '../config'
+const ApiUrl = config[process.env.REACT_APP_NODE_ENV || "development"].apiUrl;
 
 let data = {};
 let information = {};
@@ -66,7 +68,7 @@ function NewUser() {
                     body: JSON.stringify(data)
                     };
             
-                fetch('http://localhost:8080/users', information)
+                fetch(ApiUrl + '/users', information)
                     .then(response => response.json())
                     .then(data => {
                     console.log('Success:', data);

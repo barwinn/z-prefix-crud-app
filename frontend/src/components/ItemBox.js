@@ -6,6 +6,9 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
+import config from '../config'
+const ApiUrl = config[process.env.REACT_APP_NODE_ENV || "development"].apiUrl;
+
 
 let data = {};
 let information = {};
@@ -89,7 +92,7 @@ function ItemBox(props) {
                     body: JSON.stringify(data)
                     };
             
-                fetch('http://localhost:8080/items/' + currentItem.id, information)
+                fetch(ApiUrl + '/items/' + currentItem.id, information)
                     .then(window.location = '/personalitems')
                     .then(response => response.json())
                     .then(data => {
@@ -113,7 +116,7 @@ function ItemBox(props) {
                   },
                   };
           
-              fetch('http://localhost:8080/items/' + currentItem.id, information)
+              fetch(ApiUrl + '/items/' + currentItem.id, information)
                   .then(window.location = '/personalitems')
                   .then(response => response.json())
                   .then(data => {
