@@ -3,7 +3,10 @@ const express = require('express');
 
 const app = express();
 const PORT = process.env.PORT || 8080;
-const knex = require('knex')(require('./knexfile.js')["development"]);
+
+const env = process.env.NODE_ENV || 'development';
+const config = require('./knexfile')[env];
+const knex = require('knex')(config);
 
 const cors = require('cors');
 
