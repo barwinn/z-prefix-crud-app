@@ -15,8 +15,7 @@ let information = {};
 
 function ItemBox(props) {
   let currentItem = props.item;
-  let currentUser = props.user;
-  currentUser = 4;
+  let currentUser = parseInt(document.cookie);
 
   let currentMode = props.mode;
   let displayDescription = "";

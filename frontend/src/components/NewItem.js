@@ -11,8 +11,8 @@ const ApiUrl = config[process.env.REACT_APP_NODE_ENV || "development"].apiUrl;
 let data = {};
 let information = {};
 
-function NewItem(props) {
-    let currentUser = props.user;
+function NewItem() {
+  let currentUser = parseInt(document.cookie);
     const [itemname, setItemname] = React.useState('');
     const [description, setDescription] = React.useState('');
     const [quantity, setQuantity] = React.useState('');

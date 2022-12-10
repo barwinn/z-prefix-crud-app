@@ -5,10 +5,9 @@ import Paper from '@mui/material/Paper';
 import config from '../config'
 const ApiUrl = config[process.env.REACT_APP_NODE_ENV || "development"].apiUrl;
 
-function PublicItems(props) {
+function PublicItems() {
     const [itemData, setItemData] = React.useState([]);
     const url = ApiUrl + `/items`;
-    let currentUser = props.user;
 
     React.useEffect(() => {
         async function getQueryResults() {

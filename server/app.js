@@ -8,39 +8,111 @@ const env = process.env.NODE_ENV || 'development';
 const config = require('./knexfile')[env];
 const knex = require('knex')(config);
 
+const bcrypt = require("bcrypt");
 const cors = require('cors');
 
+const saltRounds = 10;
+const { hash, compare } = bcrypt;
 
 app.use(express.json());
 app.use(cors());
 
-
 app.listen(PORT, () => {
     console.log(`The server is running on ${PORT}`);
   });
+
+
+//HASHING AND SALTING
+function createUser(id, first_name, last_name, username, passwordHash) {
+  return knex("users")
+    .insert({
+      'id': id,
+      'first_name': first_name,
+      'last_name': last_name,
+      'username': username,
+      'password': passwordHash,
+    })
+    .then((data) => data);
+}
+
+
+function getPasswordHashForUser(username) {
+  return knex("users")
+    .where( { username } )
+    .select(`password`)
+    .then((data) => data[0].password);
+}
+
+
+app.post("/login", (req, res) => {
+  // verify if a user has entered the right password for their existing account
+
+  let username = req.body.username;
+  let pass = req.body.password;
+  console.log(pass);
+
+  getPasswordHashForUser(username)
+    .then((hashedPass) => {
+      // check the entered pass against the hashed one using bcrypt
+      console.log(`What the user entered on login:`, pass);
+      console.log(`What the db has stored for that user:`, hashedPass);
+      // look up the hashed password for that user
+      compare(pass, hashedPass)
+        // return a succeed or fail message, depending on the password being right
+        .then((isMatch) => {
+          if (isMatch) res.status(202).json("PASSWORDS MATCH");
+          else res.status(401).json("NO MATCH FOR THE PASSWORDS");
+        })
+        .catch((err) => res.status(500).json(err));
+    })
+    .catch((err) => res.status(500).json("Unrecognized Username"));
+});
+
 
 /////CREATES/////
 //Create new user
 app.post('/users', async (req, res) => {
     console.log('User add called');
     console.log(req.body);
-    let maxObject = await knex('users').max('id');
-    try{
-        let insertedUser = await knex('users').insert({
-            'id': maxObject[0].max + 1,
-            'first_name': req.body.first_name,
-            'last_name': req.body.last_name,
-            'username':req.body.username,
-            'password': req.body.password,
-        })
 
-        let responseString = 'New User: ' + req.body.first_name + ' ' + req.body.last_name + ' : ' + req.body.username;
-        console.log('New User ID:', responseString);
-        res.status(201).send(insertedUser);
-    } catch (e){
-        console.log('Error in adding user:', e);
-    }
+    console.log(hash, saltRounds);
+    let maxObject = await knex('users').max('id');
+    let id = maxObject[0].max + 1;
+
+    let firstname = req.body.first_name;
+    let lastname = req.body.last_name;
+    let username = req.body.username;
+    let pass = req.body.password;
+    
+
+    hash(pass, saltRounds)
+    .then((hashedPass) => {
+      // then insert the record into the DB and return a success message
+      console.log(`What the password actually is:`, pass);
+      console.log(`What gets stored in the DB:`, hashedPass);
+      createUser(id, firstname, lastname, username, hashedPass)
+        .then((data) => res.status(201).json("USER CREATED"))
+        .catch((err) => res.status(500).json(err));
+    })
 })
+
+  //GET USER ID
+  app.post('/userID', function(req, res) {
+    const current_username = req.body.username;
+    console.log(current_username);
+    knex
+      .select('id')
+      .from('users')
+      .where('username', current_username)
+      .then(data => res.status(200).json(data))
+      
+      .catch(err =>
+        res.status(404).json({
+          message:
+            'The data you are looking for could not be found. Please try again'
+        })
+      );
+  });
 
 //Create new item
 app.post('/items', async (req, res) => {
@@ -121,6 +193,7 @@ app.get('/items/:id', function(req, res) {
       })
     );
 });
+
 
 /////UPDATES/////
 //Update Item

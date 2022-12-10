@@ -10,28 +10,18 @@ const ApiUrl = config[process.env.REACT_APP_NODE_ENV || "development"].apiUrl;
 
 let data = {};
 let information = {};
-const url = ApiUrl + `/users`;
+const url = ApiUrl + `/login`;
 
 function Login() {
-  const authObject = React.useContext(AuthContext);
-  console.log(authObject);
-  console.log(authObject.auth);
-  authObject.setAuth("temper");
-  console.log(authObject.auth);
+  //const authObject = React.useContext(AuthContext);
+  //console.log(authObject);
+  //console.log(authObject.auth);
+  //authObject.setAuth("temper");
+  //console.log(authObject.auth);
 
   const [userData, setUserData] = React.useState([]);
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
-
-  React.useEffect(() => {
-    async function getQueryResults() {
-        const response = await fetch(url);
-        const data = await response.json();
-        setUserData(data);
-        console.log(data)
-    }
-    getQueryResults()
-  }, [])
 
   return (
     <Box sx={{bgcolor: 'white', padding: 2}}>
@@ -55,20 +45,54 @@ function Login() {
         /> 
         <Button variant="contained" onClick={
             (event) => {
-                event.preventDefault();
-                data = {
-                    username: username,
-                    password: password,
-                }
-                for (const entry of userData) {
-                  if (entry.username === data.username) {
-                    if (entry.password === data.password) {
-                    console.log('success');
-                    window.location = '/personalitems';
-                    }
-                }
-                }
-            }
+              event.preventDefault();
+              data = {
+                  username: username,
+                  password: password
+              }
+          
+              information = {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(data)
+                  };
+          
+              fetch(ApiUrl + '/login', information)
+                  .then(response => response.json())
+                  .then(data => {
+                  console.log(data);
+                  if (data === 'PASSWORDS MATCH') {
+
+                    data = {
+                      username: username,
+                      password: password
+                  }
+              
+                  information = {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json'
+                      },
+                      body: JSON.stringify(data)
+                      };
+              
+                  fetch(ApiUrl + '/userID', information)
+                      .then(response => response.json())
+                      .then(data => {
+                      console.log(data);
+                      console.log(data[0].id);
+                      console.log("success?");
+                      document.cookie = data[0].id + "; path=/";
+                      window.location = '/personalitems';
+                      })
+                  }
+              })
+                  .catch((error) => {
+                  console.error('Error:', error);
+              });
+          }
         }>Login</Button>
       </Grid>
     </Box>

@@ -9,7 +9,7 @@ import config from '../config'
 const ApiUrl = config[process.env.REACT_APP_NODE_ENV || "development"].apiUrl;
 
 function Header() {
-
+  let currentUser = parseInt(document.cookie);
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -18,6 +18,9 @@ function Header() {
             <Button href="/" variant="contained">
               The Inventory Site
            </Button>
+           {(Number.isInteger(currentUser)) ? (<Button href="/personalitems" variant="contained">
+              My Items
+           </Button>):''}
           </Typography>
           <Stack direction="row" spacing={2}>
           <Button href="/login" color="inherit" variant="outlined">Login</Button>
